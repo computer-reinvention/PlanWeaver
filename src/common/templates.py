@@ -1,10 +1,12 @@
+from src.types.environment import ExecutionEnvironment
+from src.types.misc import PlanFormat
 from ..types.goal import AgentGoal
 from ..types.plan import AgentPlan
 
 
 class PromptTemplates:
     @classmethod
-    def next_step_instructions(cls, plan: AgentPlan):
+    def next_step_instructions(cls, plan: AgentPlan) -> str:
         """
         Get an instruction prompt for the next step.
         """
@@ -17,7 +19,7 @@ class PromptTemplates:
         )
 
     @classmethod
-    def generate_plan_prompt(cls, goal: AgentGoal):
+    def generate_plan_prompt(cls, goal: AgentGoal) -> str:
         """
         Get an instruction prompt for the next step.
         """
@@ -28,11 +30,16 @@ class PromptTemplates:
         )
 
     @classmethod
-    def generate_plan_system_prompt(cls):
+    def generate_plan_system_prompt(
+        cls, environment: ExecutionEnvironment, format: PlanFormat
+    ) -> str:
         """
         Get an instruction prompt for the next step.
         """
-        return GENERATE_PLAN_SYSTEM_PROMPT
+        return GENERATE_PLAN_SYSTEM_PROMPT.format(
+            environment=environment,
+            format=format,
+        )
 
 
 NEXT_STEP_INSTRUCTIONS = """You are a step-by-step plan executor.
@@ -74,18 +81,11 @@ Examine the above information. The next step to be executed is -
 
 GENERATE_PLAN_SYSTEM_PROMPT = """You are a step-by-step plan executor.
 
-Goal :
-{objective}
+You generate step-by-step plans towards any given objective.
 
-Input Description :
-{input_description}}
+Here are the details about the environement you are executing in - 
+{environment}
 
-Input :
-{input}
-
-Execution Status:
-{steps}
-
-Examine the above information. The next step to be executed is -
-{next_step}
+For any given goal, you need to generate a step-by-step plan in the following format :
+{format}
 """

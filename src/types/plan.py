@@ -1,4 +1,5 @@
 from dataclasses import dataclass
+from typing import Callable
 
 from .goal import AgentGoal
 from .step import AgentStep
@@ -8,6 +9,15 @@ from ..common.exceptions import EndOfPlan
 
 @dataclass
 class AgentPlan:
+    """
+    A data class that represents the generated plan of execution.
+
+    Args:
+        goal (AgentGoal): The goal of the agent, containing the input and input description.
+        steps (list[AgentStep]): The list of steps in the plan. Each step can contain the result and whether it has been completed.
+        current_step_index (int, optional): The index of the current step in the plan. Defaults to 0.
+    """
+
     goal: AgentGoal
     steps: list[AgentStep]
     current_step_index: int = 0
@@ -80,3 +90,32 @@ class AgentPlan:
         dprint(f"__repr__ called: {repr_str}")
 
         return repr_str
+
+
+class AgentPlanFormat:
+    """
+    The formatting info required to generate and parse the plan of the plan.
+
+    Args:
+        instruction (str): The instruction prompt that tells the LLM how the generated plan should be formatted.
+        example (str): An example of a generated plan showcasing ideal formatting.
+        parser (Callable): A function that parses the generated plan into a list of steps (str).
+    """
+
+    instructions: str
+    example: str
+    parser: Callable
+
+    def __repr__(self):
+        return (
+            f"PlanFormat(instruction={self.instructions!r}, "
+            f"example={self.example!r}, "
+            f"parser={self.parser.__name__!r})"
+        )
+
+    def __str__(self):
+        return (
+            f"Plan Format:\n"
+            f"Instructions: {self.instructions}\n"
+            f"Example: {self.example}\n"
+        )
