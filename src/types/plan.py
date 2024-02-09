@@ -67,7 +67,7 @@ class AgentPlan:
         )
 
         plan_str = (
-            f"Goal:\n{goal_str}\n\n{current_step_str}\n\nSteps:\n{steps_str}"
+            f"Goal:\n{goal_str}\n\nSteps:\n{steps_str}\n\n{current_step_str}"
         )
 
         dprint(f"__str__ called: \n{plan_str}")
