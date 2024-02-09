@@ -5,7 +5,7 @@ from .step import AgentStep
 
 
 class EndOfPlan(Exception):
-    pass
+    """Raised when trying to move beyond the last step of the plan."""
 
 
 @dataclass
@@ -43,3 +43,17 @@ class AgentPlan:
         self.current_step_index += 1
 
         return self.current_step
+
+    def __str__(self):
+        goal_str = str(self.goal)
+        current_step_str = f"Current Step ({self.current_step_index + 1}): {self.current_step}"
+        steps_str = "\n".join(
+            [f"Step {idx + 1}: {step}" for idx, step in enumerate(self.steps)]
+        )
+
+        return (
+            f"Goal:\n{goal_str}\n\n{current_step_str}\n\nSteps:\n{steps_str}"
+        )
+
+    def __repr__(self):
+        return f"AgentPlan(goal={self.goal!r}, steps={self.steps!r}, current_step_index={self.current_step_index})"

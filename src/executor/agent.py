@@ -2,6 +2,7 @@ from collections.abc import Callable
 
 from .utils import dprint
 from ..common.templates import PromptTemplates
+from ..common.debug import dprint
 from ..types.plan import AgentPlan
 
 
