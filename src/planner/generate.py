@@ -28,21 +28,26 @@ def generate_plan(
         format (AgentPlanFormat): Container for information about how to format and parse the plan.
         model (str, optional): The model to use for generating plans. Defaults to "gpt-4-1106-preview".
     """
-    dprint("Getting completion...")
+    dprint(
+        f"Initializing plan generation with\n"
+        f"Goal: {goal}\n"
+        f"Environment: {environment}"
+    )
+
+    system_prompt = PromptTemplates.generate_plan_system_prompt(
+        environment=environment,
+        format=format,
+    )
+    user_prompt = PromptTemplates.generate_plan_prompt(goal)
+
+    dprint(f"System prompt: {system_prompt}")
+    dprint(f"User prompt: {user_prompt}")
+
     completion = openai.chat.completions.create(
         model=model,
         messages=[
-            {
-                "role": "system",
-                "content": PromptTemplates.generate_plan_system_prompt(
-                    environment=environment,
-                    format=format,
-                ),
-            },
-            {
-                "role": "user",
-                "content": PromptTemplates.generate_plan_prompt(goal),
-            },
+            {"role": "system", "content": system_prompt},
+            {"role": "user", "content": user_prompt},
         ],
         temperature=temperature,
         top_p=top_p,
@@ -50,12 +55,14 @@ def generate_plan(
         n=n_completions,
     )
 
-    dprint("Completion :")
-    dprint(completion)
+    dprint(f"Completion received. Processing steps...")
 
     steps = [
         AgentStep(step)
         for step in format.parser(completion.choices[0].message.content)
     ]
+
+    dprint(f"Generated steps: {steps}")
+    dprint(f"Plan generation completed.")
 
     return AgentPlan(goal=goal, steps=steps)
