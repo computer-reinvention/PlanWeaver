@@ -35,7 +35,7 @@ class ExecutionEnvironment:
         Returns a readable string representation of the environment,
         highlighting its name, description, and key attributes.
         """
-        actions_str = "\n ".join(self.actions)
+        actions_str = "\n ".join(str(self.actions))
         constraints_str = (
             "\n -".join(self.constraints)
             if self.constraints

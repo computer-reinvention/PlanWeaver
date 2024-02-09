@@ -1,5 +1,5 @@
 from src.types.environment import ExecutionEnvironment
-from src.types.misc import PlanFormat
+from src.types.plan import AgentPlanFormat
 from ..types.goal import AgentGoal
 from ..types.plan import AgentPlan
 
@@ -11,9 +11,7 @@ class PromptTemplates:
         Get an instruction prompt for the next step.
         """
         return NEXT_STEP_INSTRUCTIONS.format(
-            objective=plan.goal.objective,
-            input_description=plan.goal.input_description,
-            input=plan.goal.input,
+            goal=plan.goal,
             steps=plan.steps,
             next_step=plan.next_step,
         )
@@ -23,15 +21,13 @@ class PromptTemplates:
         """
         Get an instruction prompt for the next step.
         """
-        return NEXT_STEP_INSTRUCTIONS.format(
-            objective=goal.objective,
-            input_description=goal.input_description,
-            input=goal.input,
+        return GENERATE_PLAN_STEPS.format(
+            goal=goal,
         )
 
     @classmethod
     def generate_plan_system_prompt(
-        cls, environment: ExecutionEnvironment, format: PlanFormat
+        cls, environment: ExecutionEnvironment, format: AgentPlanFormat
     ) -> str:
         """
         Get an instruction prompt for the next step.
@@ -44,39 +40,20 @@ class PromptTemplates:
 
 NEXT_STEP_INSTRUCTIONS = """You are a step-by-step plan executor.
 
-Goal :
-{objective}
-
-Input Description :
-{input_description}}
-
-Input :
-{input}
+Goal:
+{goal}
 
 Execution Status:
 {steps}
 
 Examine the above information. The next step to be executed is -
-{next_step}
-"""
+{next_step}"""
 
 
-GENERATE_PLAN_STEPS = """You are a step-by-step plan executor.
+GENERATE_PLAN_STEPS = """Generate a formatted step-by-step plan to achieve the following objective.
 
-Goal :
-{objective}
+{goal}
 
-Input Description :
-{input_description}}
-
-Input :
-{input}
-
-Execution Status:
-{steps}
-
-Examine the above information. The next step to be executed is -
-{next_step}
 """
 
 GENERATE_PLAN_SYSTEM_PROMPT = """You are a step-by-step plan executor.
@@ -87,5 +64,4 @@ Here are the details about the environement you are executing in -
 {environment}
 
 For any given goal, you need to generate a step-by-step plan in the following format :
-{format}
-"""
+{format}"""

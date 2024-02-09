@@ -79,19 +79,15 @@ class AgentPlan:
         plan_str = (
             f"Goal:\n{goal_str}\n\nSteps:\n{steps_str}\n\n{current_step_str}"
         )
-
-        dprint(f"__str__ called: \n{plan_str}")
-
         return plan_str
 
     def __repr__(self):
         repr_str = f"AgentPlan(goal={self.goal!r}, steps={self.steps!r}, current_step_index={self.current_step_index})"
 
-        dprint(f"__repr__ called: {repr_str}")
-
         return repr_str
 
 
+@dataclass
 class AgentPlanFormat:
     """
     The formatting info required to generate and parse the plan of the plan.
