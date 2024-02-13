@@ -23,6 +23,14 @@ class AgentPlan:
     current_step_index: int = 0
 
     @property
+    def finished(self) -> bool:
+        """
+        Whether or not the plan has finished executing.
+        """
+
+        return self.current_step_index >= len(self.steps)
+
+    @property
     def current_step(self):
         """
         The current step in this plan. That is, the step that is being / should be executed right now.
@@ -44,7 +52,7 @@ class AgentPlan:
             return None
 
         dprint(
-            f"Accessing next_step property: Moving to next step: Step {self.current_step_index + 2}"
+            f"Accessing next_step property: Moving to next step: Step {self.current_step_index + 1}"
         )
         return self.steps[self.current_step_index + 1]
 
@@ -53,20 +61,17 @@ class AgentPlan:
         Mark the current step as completed and proceed to the next step.
         """
         dprint(
-            f"Executing next method: Completing current step: Step {self.current_step_index + 1} with result: {result}"
+            f"Completing current step: Step {self.current_step_index + 1} with result: {result}"
         )
-        self.current_step.complete(result)
 
-        if self.current_step_index >= len(self.steps) - 1:
-            dprint(
-                "Executing next method: End of plan reached. No more steps to proceed."
-            )
+        self.current_step.complete(result)
+        self.current_step_index += 1
+
+        if self.current_step_index > len(self.steps) - 1:
+            dprint("End of plan reached. No more steps to proceed.")
             raise EndOfPlan
 
-        self.current_step_index += 1
-        dprint(
-            f"Executing next method: Proceeding to next step: Step {self.current_step_index + 1}"
-        )
+        dprint(f"Proceeding to next step: Step {self.current_step_index + 1}")
         return self.current_step
 
     def __str__(self):
@@ -76,9 +81,7 @@ class AgentPlan:
             [f"Step {idx + 1}: {step}" for idx, step in enumerate(self.steps)]
         )
 
-        plan_str = (
-            f"Goal:\n{goal_str}\n\nSteps:\n{steps_str}\n\n{current_step_str}"
-        )
+        plan_str = f"Goal:\n{goal_str}\n\n\nSteps:\n{steps_str}\n\n\n{current_step_str}\n"
         return plan_str
 
     def __repr__(self):
